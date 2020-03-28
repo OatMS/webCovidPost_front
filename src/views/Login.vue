@@ -104,6 +104,7 @@ export default {
   data (){
     return {
       // email : "",
+      login_success:false,
       password : "",
       // email : "oat.boonnavasin@gmail.com",
       // password : "1234",

@@ -113,45 +113,6 @@
       <div style="clear:both"></div>
 
       <!-- ---------------------------------------------------------------------------------------------- -->
-      <!-- -----------------------------------answer.contact_name---------------------------------------- -->
-      <!-- ---------------------------------------------------------------------------------------------- -->
-
-      <div class="answer-section">
-        <div  class="arrow-left"></div>
-        <div v-show="ans.contact_name.length >0" class="location-list-new">
-          <div class="second-instruction">
-            <!-- <span class="question-number">2</span> -->
-            <b><u>
-              <p class="second-instruction">
-              ชื่อผู้ติดต่อ
-              <span @click.stop="ans.contact_name = []" class="float-right clear-location-all pointer">ลบชื่อที่ทั้งหมด</span>
-              </p>
-            </u></b>
-          </div>
-
-          <div v-for=" (name,index) in ans.contact_name" class="location-stoke-select pointer "
-              @mouseover="hoverLocationIndex=index;hoverAttr='contact_name'"
-              @mouseleave="hoverLocationIndex=null;hoverAttr=null"
-          >
-          <div class="location-new" >
-            <img class="location-icon float-left phase-img"  src="@/assets/img/location-marker.png" alt="">
-            <p class="p-location"> {{name}} 
-              <span v-show="hoverLocationIndex==index&&hoverAttr=='contact_name'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
-                  <i @click.stop="removeLocation('contact_name',index)" class='delete-location-element fa fa-minus-circle'></i>
-              </span>
-            </p>
-          </div>
-          </div>
-          <div  class="arrow-right"></div>
-          <div class="location-link-new">
-
-          </div>
-        </div>
-      </div>
-
-      <div style="clear:both"></div>
-
-      <!-- ---------------------------------------------------------------------------------------------- -->
       <!-- --------------------------------answer.contact_address---------------------------------------- -->
       <!-- ---------------------------------------------------------------------------------------------- -->
 
@@ -160,6 +121,7 @@
         <div  class="arrow-left"></div>
         <div v-show="ans.contact_address.length >0" class="location-list-new">
           <div class="second-instruction">
+             <img class="location-icon float-left phase-img"  src="@/assets/img/contact-icon.png" alt="">
             <!-- <span class="question-number">2</span> -->
             <b><u>
               <p class="second-instruction">
@@ -204,6 +166,7 @@
         <div  class="arrow-left"></div>
         <div v-show="ans.organize_name.length >0" class="location-list-new">
           <div class="second-instruction">
+             <img class="location-icon float-left phase-img"  src="@/assets/img/organization-icon.png" alt="">
             <!-- <span class="question-number">2</span> -->
             <b><u>
               <p class="second-instruction">
@@ -246,6 +209,7 @@
         <div v-show="ans.request_or_offer_items.length >0" class="location-list-new">
           <div class="second-instruction">
             <!-- <span class="question-number">2</span> -->
+            <img class="location-icon float-left phase-img"  src="@/assets/img/item-icon.png" alt="">
             <b><u>
               <p class="second-instruction">
               สิ่งของที่ร้องขอ / เสนอบริจาค
@@ -260,7 +224,7 @@
               
           >
           <div class="location-new" >
-             <img class="location-icon float-left phase-img"  src="@/assets/img/location-marker.png" alt="">
+             <!-- <img class="location-icon float-left phase-img"  src="@/assets/img/item.png" alt=""> -->
             <p class="p-location"> {{request_or_offer_items}} 
               <span v-show="hoverLocationIndex==index&&hoverAttr=='request_or_offer_items'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
                   <i @click.stop="removeLocation('request_or_offer_items',index)" class='delete-location-element fa fa-minus-circle'></i>
@@ -359,7 +323,7 @@ export default {
       nowHightlighted:"",
       phaseList:[],
       ans: {
-        'contact_name':[],
+        // 'contact_name':[],
         'contact_address': [], //ที่อยู่
         'organize_name':[], //หน่วยงานที่ขอรับบริจาค
         'purpose_message':"", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
@@ -392,25 +356,25 @@ export default {
         modal1: false,
       },
       payloadContextMenuTweet:[
-        {
-          "text" : "ชื่อผู้ขอความช่วยเหลือ",
-          "type": "contact_name",
-          "src": "location-marker.png"
-        },
+        // {
+        //   "text" : "ชื่อผู้ขอความช่วยเหลือ",
+        //   "type": "contact_name",
+        //   "src": "location-marker.png"
+        // },
         {
           "text" : "ที่อยู่ติดต่อ",
           "type": "contact_address",
-          "src": "area-icon.png"
+          "src": "contact-icon.png"
         },
         {
           "text" : "ชื่อหน่วยงาน",
           "type": "organize_name",
-          "src": "from-icon.png"
+          "src": "organization-icon.png"
         },
         {
           "text" : "สิ่งของที่ร้อขอ",
           "type": "request_or_offer_items",
-          "src": "to-icon.png"
+          "src": "item-icon.png"
         }
       ],
       canNext: false,
@@ -515,10 +479,10 @@ export default {
           console.log("text_type is: "+text_type)
           console.log(this.ans)
 
-          if(text_type=="contact_name"){
-            this.ans.contact_name.push(this.nowHightlighted)
-          }
-          else if(text_type=="contact_address"){
+          // if(text_type=="contact_name"){
+          //   this.ans.contact_name.push(this.nowHightlighted)
+          // }
+          if(text_type=="contact_address"){
             this.ans.contact_address.push(this.nowHightlighted)
           }
           else if(text_type=="contact_address"){
@@ -691,7 +655,7 @@ export default {
       console.log("setup  next tweet")
       init()
       this.ans={
-        'contact_name':[],
+        // 'contact_name':[],
         'contact_address': [], //ที่อยู่
         'organize_name':[], //หน่วยงานที่ขอรับบริจาค
         'purpose_message':"", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
@@ -723,7 +687,7 @@ export default {
       }
     },
     checkLengthAllAttr(){
-      if((this.ans.contact_name.length == 0 && this.ans.contact_address.length == 0 && this.ans.organize_name.length == 0 && this.ans.request_or_offer_items.length == 0 )||  this.purpose_message == "" ){
+      if(( this.ans.contact_address.length == 0 && this.ans.organize_name.length == 0 && this.ans.request_or_offer_items.length == 0 )||  this.purpose_message == "" ){
         return false
       }else{
         return true
