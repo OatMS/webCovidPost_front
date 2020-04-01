@@ -35,7 +35,8 @@
                         </template> -->
                         <template>
                             <div class="text-center text-muted mb-4">
-                                ข้อมูลเพื่อรับรางวัลจ้า
+                                <h4>COVID-19 THagGetter</h4> 
+                                สร้างบัญชีจิดอาสา
                                 <!-- <small>ข้อมูลเพื่อรับรางวัลจ้า</small> -->
                             </div>
                             <form role="form">
@@ -45,13 +46,13 @@
                                             v-model="user.name"
                                             addon-left-icon="ni ni-hat-3">
                                 </base-input>
-                                <base-input alternative
+                                <!-- <base-input alternative
                                             class="mb-3"
                                             placeholder="เบอร์โทรศัพท์"
                                             type="number"
                                             v-model="user.tel"
                                             addon-left-icon="ni ni-hat-3">
-                                </base-input>
+                                </base-input> -->
                                 <base-input alternative
                                             class="mb-3"
                                             v-model="user.email"
@@ -82,6 +83,7 @@
                                     </span>
                                 </base-checkbox> -->
                                 <div class="text-center">
+                                    <base-button @click="gotoLoginPage" type="neutral" class="my-4">สร้างบัญชีใหม่</base-button>
                                     <base-button @click.stop="checkVerifyForm" type="primary" class="my-4">สร้างบัญชีผู้ใช้</base-button>
                                 </div>
                             </form>
@@ -94,9 +96,10 @@
                             </a> -->
                         </div>
                         <div class="col-6 text-right">
-                            <a @click="gotoLoginPage" class="text-light pointer">
+                            
+                            <!-- <a @click="gotoLoginPage" class="text-light pointer">
                                 <small>Login</small>
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                 </div>
@@ -120,7 +123,8 @@ export default {
                 email:"",
                 tel:"",
                 password:"",
-                repassword:""
+                repassword:"",
+                login_via:'common'
             }
         }
     },
@@ -194,10 +198,10 @@ export default {
                 textAlert  = 'กรุณากรอกอีเมล์ให้ถูกต้องค่ะ'
                 isHasAlert =  true
             }
-            else if(this.user.tel.length == 10){
-                textAlert  = 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้องค่ะ'
-                isHasAlert =  true
-            }
+            // else if(this.user.tel.length == 10){
+            //     textAlert  = 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้องค่ะ'
+            //     isHasAlert =  true
+            // }
             else if(this.user.password.length < 6){
                 textAlert  = 'พาสเวิร์ดต้องมากกว่า 6 ตัวอักษรค่ะ'
                 isHasAlert =  true
@@ -237,7 +241,7 @@ export default {
                         window.$cookies.set('user',returnData.data)
                          
                         Swal.fire({
-                            title: 'ลงทะเบียนสำเร็ว',
+                            title: 'ลงทะเบียนสำเร็จ',
                             text: 'ชื่อผู้ใช้ '+self.user.name+' ลงทะเบียนเรียบร้อยแล้วค่ะ',
                             icon:'success'
 

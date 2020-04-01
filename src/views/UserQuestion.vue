@@ -7,12 +7,15 @@
 
     <ScoreBoard ref="scoreBoard" v-bind:class="{'blur':showInstruction} " @click.stop="showInstruction=false;closeContextMenu()"></ScoreBoard>
     <div class="header-bar" v-bind:class="{'blur':showInstruction}">
-      <div class="score col-sm-3">
-        <h6 style="float:left" class=""><b>Score:</b>  </h6><div class="span-score"> <span > {{user_score}}</span></div>
+      <div class="score cชol-sm-3">
+        <h6 style="float:left; color:white" class=""><b>Score:</b>  </h6><div class="span-score"> <span > {{user_score}}</span></div>
       </div>
 
       <div style="text-align:right; padding-right:40px;" class="user-info col-sm-6">
-        <h7 style="" class=""><b>{{user.name}}</b>  </h7> <img src="@/assets/img/user-icon.png" class="user-icon" alt="">
+        <h7 style="" class=""><b>{{user.name.substring(0, 15)}}</b>  </h7> 
+        <img src="@/assets/img/user-icon.png" class="user-icon" alt="">
+        <button @click.stop="logout" type="button" class="btn btn-primary btn-sm btn-neutral logout-btn">Logout</button>
+
       </div>
 
 
@@ -22,43 +25,56 @@
 
       <div class="question-header" v-bind:class="{'blur':showInstruction}" @click.stop="showInstruction=false;closeContextMenu()" >
         <div class="instruction" >
-          <img  data-toggle="Tutorail" @click.stop="showInstruction=true;closeContextMenu()" src="@/assets/img/help-icon.jpg" class="help-icon pointer">
-          <h4 style=""><b> ข้อความ Tweet</b></h4>
-          <p><span class="question-number"><b>1</b></span>กรุณาไฮไลท์คำที่ระบุสถานที่ทั้งหมด พร้อมเลือกประเภทของสถานที่นั้นๆ</p>
+          <img  v-show="false"   data-toggle="Tutorail" @click.stop="showInstruction=true;closeContextMenu()" src="@/assets/img/help-icon.jpg" class="help-icon pointer">
+          <h4 style=""><b> ข้อความจาก {{post.text_type}}</b></h4>
+          <p class="first-instruction">
+            <span class="question-number"><b>1</b></span>
+            กรุณาระบุประเภทของข้อความที่ตัวเลือกด้านล่าง และเลือกคำหรือกลุ่มคำที่บอกข้อมูล ชื่อบุคคล/หน่วยงาน, ช่องทางติดต่อ, สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
+            <span style="color: #10A64A;">(คลิกลูกศร &gt; เพื่อไปข้อถัดไป)</span>
+          </p>
         </div>
-        
-        <div  class="arrow-left">
-          <a><img v-show="answer_history.length!== 0 && answer_current >  0" @click="clickBack" src="@/assets/img/back-icon.png" class="arrow-icon pointer" alt="กลับไปก่อนหน้า"></a>
+
+        <div class="post-ans-arrow">
+          <div  class="arrow-left">
+            <a><img v-show="answer_history.length!== 0 && answer_current >  0" @click="clickBack" src="@/assets/img/back-icon.png" class="arrow-icon pointer" alt="กลับไปก่อนหน้า"></a>
+          </div>
+          <div
+              tabindex="0"
+              id="tweettext"
+              style="">
+              <div class="twitter-col-icon" style="width:10%; float:left; text-align: right;">
+                <img v-if="post.text_type == 'Twitter'" src="@/assets/img/twitter-icon.png" style="width:50px" alt="">
+                <img v-else-if="post.text_type == 'Facebook'" src="@/assets/img/facebook-icon.png" style="width:50px" alt="">
+                <img v-else-if="post.text_type == 'Instargram'" src="@/assets/img/ig-icon.png" style="width:50px" alt="">
+              </div>
+
+              <div @click.start="$refs.contextMenu.close()"
+                  @click.stop=" detectTextHightlighted($event,{'type':'post'})"
+                  style="width:85%; float:left; margin-left:20px;">
+                <h6><b>{{post.text_type}}</b></h6>
+                <!-- <p>ขอรับบริจาครพ.ทุ่งยางแดง จ.ปัตตานีด้วยน่ะคร้าmask N95 ชุดPPE Mask surgical เราขาดมากๆๆเลยคร้า คนไข้เสี่ยงงกลับจากมาเลเซียเยอะมากคร้าช่วยพวกเราด้วยน่ะคร้าเราลำบากมากคร้าmaskต้องเย็บเอง faceshielต้องทำเอง. ผู้รับผิดชอบนางสาวนาดียะห์ ดอเลาะ แผนกห้องคลอด 0936482284. @naphat_nine 🙏🙏😭😭😭</p> -->
+                <p>{{ post_text }}</p>
+
+
+
+              </div>
+              <div style="clear:both">
+
+              </div>
+          </div>
+          <div class="arrow-right">
+            <a><img @click="clickNext" src="@/assets/img/next-icon.png" class="arrow-icon pointer" alt="ข้อต่อไป..."></a>
+          
+          </div>
+          <div style="clear:both"></div>
         </div>
-        <div
-            tabindex="0"
-            id="tweettext"
-            style="">
-            <div class="twitter-col-icon" style="width:10%; float:left; text-align: right;">
-              <img src="@/assets/img/twitter-icon.png" style="width:50px" alt="">
-            </div>
 
-            <div @click.start="$refs.contextMenu.close()"
-                @click.stop=" detectTextHightlighted($event,{'type':'tweet'})"
-                style="width:85%; float:left; margin-left:20px;">
-              <h6><b>Tweet</b></h6>
-              <p>
-                {{ tweet_text }}
-              </p>
-
-
-
-            </div>
-            <div style="clear:both">
-
-            </div>
-        </div>
-        <div class="arrow-right">
-          <a><img @click="clickNext" src="@/assets/img/next-icon.png" class="arrow-icon pointer" alt="ข้อต่อไป..."></a>
-        </div>
         <div style="clear:both"></div>
         <!-- <a v-show="true" @click="submitAndNext(false)" class="btn btn-link text-warning" style="margin-right:120px;margin-top:10px;"></a> -->
       </div>
+
+
+
 
       <!-- ---------------------------------------------------------------------------------------------- -->
       <!-- -----------------------------------answer.purpose_message------------------------------------- -->
@@ -66,19 +82,19 @@
       <div class="answer-section">
         <div  class="arrow-left"></div>
           <div  class="location-list-new">
-            <div class="col-lg-6 col-sm-6 mt-6 mt-md-0"><div class="mb-3"><small class="text-uppercase font-weight-bold">ประเภทของข้อความ</small></div>
+            <div class="col-lg-6 col-sm-6 mt-6 mt-md-0"><div class="mb-3"><small class="text-uppercase font-weight-bold">เลือกประเภทของข้อความ</small></div>
             
             <div class="custom-control custom-radio purpose-message-radio">
               <input id="zRNNANl" type="radio" class="custom-control-input " value="Request" v-model="ans.purpose_message">
               <label for="zRNNANl" class="custom-control-label">
-                    ขอความช่วยเหลือ/บริจาค
+                    ขอความช่วยเหลือ/บริจาค (Request)
               </label>
             </div>
 
             <div class="custom-control custom-radio purpose-message-radio">
               <input id="GSXZIQP" type="radio" class="custom-control-input" value="Response" v-model="ans.purpose_message">
               <label for="GSXZIQP" class="custom-control-label">
-                    แจ้งให้ความช่วยเหลือ/บริจาค
+                    แจ้งให้ความช่วยเหลือ/บริจาค (Response)
               </label>
             </div>
                 
@@ -86,16 +102,16 @@
             <div class="custom-control custom-radio purpose-message-radio">
               <input id="GSXZIQP1" type="radio" class="custom-control-input" value="Service" v-model="ans.purpose_message">
               <label for="GSXZIQP1" class="custom-control-label">
-                    เสนอความช่วยเหลือ/บริจาค
+                    เสนอความช่วยเหลือ/บริจาค (Service)
               </label>
             </div>
 
-            <div class="custom-control custom-radio purpose-message-radio">
+            <!-- <div class="custom-control custom-radio purpose-message-radio">
               <input id="GSXZIQP3" type="radio" class="custom-control-input" value="not_relate" v-model="ans.purpose_message">
               <label for="GSXZIQP3" class="custom-control-label">
                     ไม่เกี่ยวข้อง
               </label>
-            </div>
+            </div> -->
                 
 
             <div class="custom-control custom-radio purpose-message-radio">
@@ -112,65 +128,21 @@
 
       <div style="clear:both"></div>
 
-      <!-- ---------------------------------------------------------------------------------------------- -->
-      <!-- --------------------------------answer.contact_address---------------------------------------- -->
-      <!-- ---------------------------------------------------------------------------------------------- -->
-
-
-      <div class="answer-section">
-        <div  class="arrow-left"></div>
-        <div v-show="ans.contact_address.length >0" class="location-list-new">
-          <div class="second-instruction">
-             <img class="location-icon float-left phase-img"  src="@/assets/img/contact-icon.png" alt="">
-            <!-- <span class="question-number">2</span> -->
-            <b><u>
-              <p class="second-instruction">
-              ข้อความแสดงที่อยู่ติดต่อ
-              <span @click.stop="ans.contact_address = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
-              </p>
-            </u></b>
-          </div>
-
-          <div v-for=" (contact_address,index) in ans.contact_address" class="location-stoke-select pointer "
-              @mouseover="hoverLocationIndex=index;hoverAttr='contact_address'"
-              @mouseleave="hoverLocationIndex=null;hoverAttr=null"
-              
-          >
-          <div class="location-new" >
-            <!-- <img class="location-icon float-left phase-img" v-if="location.location_type=='Point'" src="@/assets/img/location-marker.png" alt="">
-            <img class="location-icon float-left phase-img" v-else-if="location.location_type=='From'" src="@/assets/img/from-icon.png" alt="">
-            <img class="location-icon float-left phase-img" v-else-if="location.location_type=='To'" src="@/assets/img/to-icon.png" alt="">
-            <img class="location-icon float-left phase-img" v-else-if="location.location_type=='Area'" src="@/assets/img/area-icon.png" alt=""> -->
-            <p class="p-location"> {{contact_address}} 
-              <span v-show="hoverLocationIndex==index&&hoverAttr=='contact_address'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
-                  <i @click.stop="removeLocation('contact_address',index)" class='delete-location-element fa fa-minus-circle'></i>
-              </span>
-            </p>
-          </div>
-          </div>
-          <div  class="arrow-right"></div>
-          <div class="location-link-new">
-
-          </div>
-        </div>
-      </div>
-      
-      <div style="clear:both"></div>
 
       <!-- ---------------------------------------------------------------------------------------------- -->
       <!-- --------------------------------answer.organize_name---------------------------------------- -->
       <!-- ---------------------------------------------------------------------------------------------- -->
 
 
-      <div class="answer-section">
+      <div v-show="ans.organize_name.length >0" class="answer-section">
         <div  class="arrow-left"></div>
-        <div v-show="ans.organize_name.length >0" class="location-list-new">
+        <div  class="location-list-new">
           <div class="second-instruction">
              <img class="location-icon float-left phase-img"  src="@/assets/img/organization-icon.png" alt="">
             <!-- <span class="question-number">2</span> -->
             <b><u>
               <p class="second-instruction">
-              ชื่อสถาบัน
+              ชื่อบุคคล/หน่วยงาน
               <span @click.stop="ans.organize_name = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
               </p>
             </u></b>
@@ -183,7 +155,7 @@
           >
           <div class="location-new" >
             <!-- <img class="location-icon float-left phase-img" v-if="location.location_type=='Point'" src="@/assets/img/location-marker.png" alt=""> -->
-            <p class="p-location"> {{organize_name}} 
+            <p class="p-location"> {{organize_name.obj_text}} 
               <span v-show="hoverLocationIndex==index&&hoverAttr=='organize_name'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
                   <i @click.stop="removeLocation('organize_name',index)" class='delete-location-element fa fa-minus-circle'></i>
               </span>
@@ -200,34 +172,37 @@
       <div style="clear:both"></div>
 
       <!-- ---------------------------------------------------------------------------------------------- -->
-      <!-- ---------------------------answer.request_or_offer_items-------------------------------------- -->
+      <!-- --------------------------------answer.contact_address---------------------------------------- -->
       <!-- ---------------------------------------------------------------------------------------------- -->
 
 
-      <div class="answer-section">
+      <div v-show="ans.contact_address.length >0" class="answer-section">
         <div  class="arrow-left"></div>
-        <div v-show="ans.request_or_offer_items.length >0" class="location-list-new">
+        <div  class="location-list-new">
           <div class="second-instruction">
+             <img class="location-icon float-left phase-img"  src="@/assets/img/contact-icon.png" alt="">
             <!-- <span class="question-number">2</span> -->
-            <img class="location-icon float-left phase-img"  src="@/assets/img/item-icon.png" alt="">
             <b><u>
               <p class="second-instruction">
-              สิ่งของที่ร้องขอ / เสนอบริจาค
-              <span @click.stop="ans.request_or_offer_items = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
+              ช่องทางติดต่อ
+              <span @click.stop="ans.contact_address = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
               </p>
             </u></b>
           </div>
 
-          <div v-for=" (request_or_offer_items,index) in ans.request_or_offer_items" class="location-stoke-select pointer "
-              @mouseover="hoverLocationIndex=index;hoverAttr='request_or_offer_items'"
+          <div v-for=" (contact_address,index) in ans.contact_address" class="location-stoke-select pointer "
+              @mouseover="hoverLocationIndex=index;hoverAttr='contact_address'"
               @mouseleave="hoverLocationIndex=null;hoverAttr=null"
               
           >
           <div class="location-new" >
-             <!-- <img class="location-icon float-left phase-img"  src="@/assets/img/item.png" alt=""> -->
-            <p class="p-location"> {{request_or_offer_items}} 
-              <span v-show="hoverLocationIndex==index&&hoverAttr=='request_or_offer_items'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
-                  <i @click.stop="removeLocation('request_or_offer_items',index)" class='delete-location-element fa fa-minus-circle'></i>
+            <!-- <img class="location-icon float-left phase-img" v-if="location.location_type=='Point'" src="@/assets/img/location-marker.png" alt="">
+            <img class="location-icon float-left phase-img" v-else-if="location.location_type=='From'" src="@/assets/img/from-icon.png" alt="">
+            <img class="location-icon float-left phase-img" v-else-if="location.location_type=='To'" src="@/assets/img/to-icon.png" alt="">
+            <img class="location-icon float-left phase-img" v-else-if="location.location_type=='Area'" src="@/assets/img/area-icon.png" alt=""> -->
+            <p class="p-location"> {{contact_address.obj_text}} 
+              <span v-show="hoverLocationIndex==index&&hoverAttr=='contact_address'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
+                  <i @click.stop="removeLocation('contact_address',index)" class='delete-location-element fa fa-minus-circle'></i>
               </span>
             </p>
           </div>
@@ -238,7 +213,55 @@
           </div>
         </div>
       </div>
+      
+      <div style="clear:both"></div>
 
+
+      <!-- ---------------------------------------------------------------------------------------------- -->
+      <!-- ---------------------------answer.items-------------------------------------- -->
+      <!-- ---------------------------------------------------------------------------------------------- -->
+
+
+      <div v-show="ans.items.length >0" class="answer-section">
+        <div  class="arrow-left"></div>
+        <div  class="location-list-new">
+          <div class="second-instruction">
+            <!-- <span class="question-number">2</span> -->
+            <img class="location-icon float-left phase-img"  src="@/assets/img/item-icon.png" alt="">
+            <b><u>
+              <p class="second-instruction">
+              สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
+              <span @click.stop="ans.items = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
+              </p>
+            </u></b>
+          </div>
+
+          <div v-for=" (item,index) in ans.items" class="location-stoke-select pointer "
+              @mouseover="hoverLocationIndex=index;hoverAttr='items'"
+              @mouseleave="hoverLocationIndex=null;hoverAttr=null"
+              
+          >
+          <div class="location-new" >
+             <!-- <img class="location-icon float-left phase-img"  src="@/assets/img/item.png" alt=""> -->
+            <p class="p-location"> {{item.obj_text}} 
+              <span v-show="hoverLocationIndex==index&&hoverAttr=='items'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
+                  <i @click.stop="removeLocation('items',index)" class='delete-location-element fa fa-minus-circle'></i>
+              </span>
+            </p>
+          <span class="badge">{{item.number_request}}</span>
+          </div>
+          
+          </div>
+          <div  class="arrow-right"></div>
+          <div class="location-link-new">
+
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ------------------------------------ grap footter ---------------------------------------------- -->
+      <div class="footer"></div>
 
 
       <!-- modal  ask user to back without save -->
@@ -255,7 +278,7 @@
 
       <modal :show.sync="modals2.modal1">
           <h6 slot="header" class="modal-title" id="modal-title-default">ไม่สามารถกลับไปข้อก่อนหน้าได้</h6>
-          <p>คุณยังไม่ได้ระบุวสถานที่ในวลีหนึ่ง</p>
+          <p>กรุณาเลือกประเภทของขอความก่อนบันทึก</p>
           <template slot="footer">
               <base-button @click="modals2.modal1 = false" type="primary">กลับไปแก้ไข</base-button>
               <base-button @click="modalSaveBeforeBack(false);modals2.modal1 = false" type="link" class="ml-auto" >ละทิ้งข้อนี้
@@ -264,7 +287,7 @@
       </modal>
 
       <modal :show.sync="modals3.modal1">
-          <h6 slot="header" class="modal-title" id="modal-title-default">คุณยังเลือกสถานที่ไม่เสร็จนะ</h6>
+          <h6 slot="header" class="modal-title" id="modal-title-default">คุณยังไม่ได้เลือกประเภทของข้อความ</h6>
           <p>ต้องการทำข้อนี้ให้เสร็จหรือไม่...?</p>
           <template slot="footer">
               <base-button @click="modals3.modal1 = false" type="primary">กลับไปแก้ไข</base-button>
@@ -287,6 +310,23 @@
     </ContextMenu>
 
   </div>
+  <transition name="fade">
+    <div v-show="isAlertSuccess" id="alertsuccess" ref="alertsuccess" role="alert" class="alert alert-success alert-dismissible">
+      <span class="alert-inner--icon">
+        <i class="ni ni-like-2"></i>
+        </span>
+        <span class="alert-inner--text">
+          <span><strong>บันทึกสำเร็จ! </strong> คำตอบถูกบันถึงแล้ว</span>
+      </span>
+          <button type="button" data-dismiss="alert" aria-label="Close" class="close">
+          </button>
+    </div>
+  </transition>
+
+</transition>
+
+
+
 </div>
 </template>
 
@@ -298,6 +338,7 @@ import ScoreBoard from "./ScoreBoard/ScoreBoard";
 import Modal from "@/components/Modal.vue";
 import Instruction from "./Instruction/Instruction.vue";
 import axios from "axios";
+import Swal from 'sweetalert2'
 
 export default {
   components: {
@@ -317,18 +358,20 @@ export default {
       answer_history:[],
       answer_count:0,
       answer_current:0,
-      tweet_text:{},
-      tweet:{},
-      tweet_id:"",
+      post_text:{},
+      post:{},
+      post_id:"",
       nowHightlighted:"",
+      nowHightlighted_start:null,
+      nowHightlighted_end:null,
       phaseList:[],
       ans: {
         // 'contact_name':[],
         'contact_address': [], //ที่อยู่
         'organize_name':[], //หน่วยงานที่ขอรับบริจาค
         'purpose_message':"", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
-        'requester_or_helper':[], //ชื่อคนขอความช่วยเหลือ หรือ ชื่อคนเสนอตวามช่วยเหลือ
-        'request_or_offer_items':[] //สิ่งของที่ร้อขอ หรือเสนอ
+        // 'requester_or_helper':[], //ชื่อคนขอความช่วยเหลือ หรือ ชื่อคนเสนอตวามช่วยเหลือ
+        'items':[] //สิ่งของที่ร้อขอ หรือเสนอ
       },
       dupplicate: false,
       context_purpose:"", //['request','offer','none']
@@ -362,23 +405,24 @@ export default {
         //   "src": "location-marker.png"
         // },
         {
-          "text" : "ที่อยู่ติดต่อ",
-          "type": "contact_address",
-          "src": "contact-icon.png"
-        },
-        {
-          "text" : "ชื่อหน่วยงาน",
+          "text" : "ชื่อบุคคล/หน่วยงาน",
           "type": "organize_name",
           "src": "organization-icon.png"
         },
         {
-          "text" : "สิ่งของที่ร้อขอ",
-          "type": "request_or_offer_items",
+          "text" : "ช่องทางติดต่อ",
+          "type": "contact_address",
+          "src": "contact-icon.png"
+        },
+        {
+          "text" : "สิ่งของ",
+          "type": "items",
           "src": "item-icon.png"
         }
       ],
       canNext: false,
-      hasChange:  false
+      hasChange:  false,
+      isAlertSuccess: false
 
     }
   },
@@ -402,13 +446,14 @@ export default {
         console.log(error);
         // currentObj.output = error;
       });
-      this.tweet_text = result['post_text']
-      this.tweet = result
-      this.tweet_id = result._id
+      this.post_text = result['post_text']
+      this.post = result
+      this.post_id = result._id
       this.user = $cookies.get("user")
       console.log(this.user)
       this.user_score = this.user.user_score
       // console.log(this.tweet_text)
+      console.log(this.post)
     }
     init()
     this.updateUserScore()
@@ -422,6 +467,9 @@ export default {
       this.$refs.contextMenu.close();
     },
     detectTextHightlighted(event,objHightlight) {
+
+      // console.log("window.getSelection().getRangeAt(0)")
+      // console.log(window.getSelection().getRangeAt(0))
       if(this.chooseContext){
         // console.log("selected context menu");
         this.$refs.contextMenu.close();
@@ -432,9 +480,15 @@ export default {
       else{
         console.log("Just highlight text");
         this.nowHightlighted = window.getSelection().toString()
+        this.nowHightlighted_start = window.getSelection().getRangeAt(0).startOffset
+        this.nowHightlighted_end = window.getSelection().getRangeAt(0).endOffset 
+        console.log("nowHightlighted: "+this.nowHightlighted);
+        console.log("nowHightlighted_start: "+this.nowHightlighted_start);
+        console.log("nowHightlighted_end: "+this.nowHightlighted_end);
+
         this.dupplicate = false
         // hightlight in tweet
-        if(objHightlight['type'] == "tweet"){
+        if(objHightlight['type'] == "post"){
           if(this.nowHightlighted !== "" && this.dupplicate == false){
             this.$refs.contextMenu.open(event, this.payloadContextMenuTweet)
             this.chooseContext  = false
@@ -482,17 +536,36 @@ export default {
           // if(text_type=="contact_name"){
           //   this.ans.contact_name.push(this.nowHightlighted)
           // }
-          if(text_type=="contact_address"){
-            this.ans.contact_address.push(this.nowHightlighted)
+          let temp_item = {
+            obj_text: this.nowHightlighted,
+            start_position: this.nowHightlighted_start,
+            end_position: this.nowHightlighted_end,
+
           }
-          else if(text_type=="contact_address"){
-            this.ans.contact_address.push(this.nowHightlighted)
+
+          if(text_type=="contact_address"){
+            this.ans.contact_address.push(temp_item)
           }
           else if(text_type=="organize_name"){
-            this.ans.organize_name.push(this.nowHightlighted)
+            this.ans.organize_name.push(temp_item)
           }
-          else if(text_type=="request_or_offer_items"){
-            this.ans.request_or_offer_items.push(this.nowHightlighted)
+          else if(text_type=="items"){
+            Swal.fire({
+                title: "ใส่จำนวนของ",
+                text: ""+this.nowHightlighted,
+                input: 'number',
+                inputPlaceholder: "จำนวน",
+                showCancelButton: true        
+            }).then((result) => {
+              console.log("result.value: "+result.value)
+                if (result.value) {
+                    this.appendItem(temp_item,result.value)
+                    console.log("Result: " + result.value);
+                }else if(result.value==""){
+                  this.appendItem(temp_item, 0)
+                }
+            });
+            
           }
           
         }
@@ -504,6 +577,17 @@ export default {
       this.chooseContext = false
       this.isChooseContextOnTweet = null
       this.highlightOnPhaseId = null
+      
+    },
+    appendItem(temp_item,number_request){
+      if(number_request >0){ 
+        temp_item.number_request = number_request
+        this.ans.items.push(temp_item)
+      }
+      else{
+        temp_item.number_request = null
+        this.ans.items.push(temp_item)
+      }
       
     },
     appendLocation(phaseIndex){
@@ -549,24 +633,24 @@ export default {
 
       if(hasLocation){
         data = {
-          tweet_id: this.tweet['_id'],
-          tweet_text: this.tweet_text,
+          post_id: this.post._id,
+          post_text: this.post_text,
+          post_date: this.post.post_date,
           ans: this.ans,
-          no_location: false,
           ans_from_account_id:this.$cookies.get('user')._id,
           ans_from_account: this.$cookies.get('user').name,
           all_locations: allLocation,
           ans_datetime : "",
-          score:10
+          score:1
           // score:allLocation.length*10
         }
       }else{
         data = {
-        tweet_id: this.tweet['_id'],
-        tweet_text: this.tweet_text,
+        post_id: this.post._id,
+        post_text: this.post_text,
+        post_date: this.post.post_date,
         ans:this.ans,
         all_locations: [],
-        no_location: true,
         ans_from_account: this.$cookies.get('user').name,
         all_locations: [],
         ans_datetime : ""
@@ -579,11 +663,11 @@ export default {
 
       if(this.isEditMode){
         // data._id = this.answer_history[this.answer_current]._id
-        uri = "http://localhost:3000/editAnswer"
+        uri = process.env.VUE_APP_URL_API+"/editAnswer"
         data._id = this.editAnswer_id
         this.answer_history[self.answer_current].ans = this.ans
       }else {
-        uri = "http://localhost:3000/submitAndNext"
+        uri = process.env.VUE_APP_URL_API+"/submitAndNext"
       }
       // console.log(data);
       console.log("is  Edit mode: "+self.isEditMode);
@@ -604,12 +688,14 @@ export default {
 
       var answer = await this.axios.post(uri, data , { useCredentails: true })
       .then(function (response) {
-        // console.log("result: "+JSON.stringify(response.data))
+        console.log("submit result: "+JSON.stringify(response.data))
         if(!isEditMode_temp){
           self.answer_history.push(response.data.result)
         }
         self.$refs.scoreBoard.updateScore();
         self.updateUserScore()
+        self.isAlertSuccess = true
+        self.fadeOutAlert()
         
 
       })
@@ -621,6 +707,7 @@ export default {
 
       this.isEditMode = false
       this.hasChange =  false
+      
       // this.userScore += 10
       // this.userScore += allLocation.length*10
 
@@ -648,11 +735,11 @@ export default {
           console.log(error);
           // currentObj.output = error;
         });
-        this.tweet_text = result['post_text']
-        this.tweet = result
+        this.post_text = result['post_text']
+        this.post = result
         // console.log(this.tweet_text)
       }
-      console.log("setup  next tweet")
+      console.log("setup  next post")
       init()
       this.ans={
         // 'contact_name':[],
@@ -660,7 +747,7 @@ export default {
         'organize_name':[], //หน่วยงานที่ขอรับบริจาค
         'purpose_message':"", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
         'requester_or_helper':[], //ชื่อคนขอความช่วยเหลือ หรือ ชื่อคนเสนอตวามช่วยเหลือ
-        'request_or_offer_items':[] //สิ่งของที่ร้อขอ หรือเสนอ
+        'items':[] //สิ่งของที่ร้อขอ หรือเสนอ
       }
     },
     submitAndNext(hasLocation){
@@ -687,7 +774,7 @@ export default {
       }
     },
     checkLengthAllAttr(){
-      if(( this.ans.contact_address.length == 0 && this.ans.organize_name.length == 0 && this.ans.request_or_offer_items.length == 0 )||  this.purpose_message == "" ){
+      if(( this.ans.contact_address.length == 0 && this.ans.organize_name.length == 0 && this.ans.items.length == 0 )||  this.purpose_message == "" ){
         return false
       }else{
         return true
@@ -727,13 +814,13 @@ export default {
         var previous_answer = Object.assign({}, JSON.parse(JSON.stringify(this.answer_history[this.answer_current])));
         var answer_id = previous_answer._id
         var answer = {}
-        var tweet = {}
+        var post = {}
         console.log("can  back to"+answer_id);
 
 
         console.log(previous_answer);
-        this.tweet_text  = previous_answer.tweet_text
-        this.tweet_id  = previous_answer.tweet_id
+        this.post_text  = previous_answer.post_text
+        this.post_id  = previous_answer.post_id
         this.ans =  previous_answer.ans
         this.editAnswer_id = previous_answer._id
 
@@ -771,6 +858,10 @@ export default {
       }
 
     },
+    fadeOutAlert(){
+      setTimeout(() => this.isAlertSuccess = false, 2000)
+
+    },
     updateUserScore(){
       console.log("updateUserScore")
       self = this
@@ -787,6 +878,11 @@ export default {
           
 
         })
+    },
+    logout(){
+      window.$cookies.set('user',{})
+      this.$router.push('/')
+      this.$router.go(process.env.VUE_APP_URL_API+'/')
     }
 
   }
@@ -819,7 +915,7 @@ export default {
 
 .header-bar{
   height: 50px;
-  background-color: #2AAAE0;
+  background-color: #3A5CA5;
   position:fixed;
   top:0;
   left:17vw;
@@ -831,6 +927,11 @@ export default {
   width:30px;
   margin-left:15px;
 }
+
+.logout-btn{
+  margin-left: 20px;
+}
+
 img.help-icon{
   width: 25px;
   float: right;
@@ -881,10 +982,25 @@ div.user-info{
   float:left;
 }
 .question-header{
-  width:1000px;
+  width:100%;
   margin: auto;
   margin-top: 80px;
 }
+.post-ans-arrow{
+  margin: 0 auto;
+    /* text-align: center; */
+  width: calc(85%);
+}
+
+div#tweettext{
+  width: calc(100% - 200px);
+  border: 1px solid #3A5CA5;
+  padding: 30px;
+  border-radius: 25px;
+  float:left;
+  text-align: left;
+}
+
 
 .question-number{
     display: block;
@@ -902,6 +1018,10 @@ div.user-info{
     font-size: 1em;
 
     margin-right: 10px;
+}
+
+.first-instruction{
+  width: 55vw;
 }
 
 .instruction{
@@ -928,13 +1048,6 @@ img.arrow-icon{
   margin-left: 20px;
 }
 
-div#tweettext{
-  width:55vw;
-  border: 1px solid #2AAAE0;
-  padding: 30px;
-  border-radius: 25px;
-  float:left;
-}
 
 .text-warning{
   float:right;
@@ -945,7 +1058,8 @@ div#tweettext{
 }
 
 div.answer-section{
-  width:1000px;
+  // width:1000px;
+  width: 85%;
   margin: auto;
   margin-top:20px;
 }
@@ -962,8 +1076,8 @@ p.second-instruction{
 
 
 div.location-list-new{
-  width: 55vw;
-  border: 1px solid #2AAAE0;
+  width: calc(100% -  200px);
+  border: 1px solid #3A5CA5;
   padding: 30px;
   border-radius: 25px;
   margin:0 100px;
@@ -978,6 +1092,9 @@ div.location-new{
   float: left;
   background-color: white;
   max-width: 1000px;
+
+  position: relative;
+  display: inline-block;
 }
 
 div.location-stoke-select{
@@ -1062,7 +1179,37 @@ span.location-delete-icon{
   filter: blur(4px);
 }
 
+#alertsuccess{
+    position: fixed;
+    bottom: 0;
+    right: 10px;
 
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+
+
+.badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: #3A5CA5 ;
+  color : white;
+}
+
+div.footer{
+  height: 100px;
+  width: 100vh;
+  clear: both;
+  background-color: white;
+}
 
 
 </style>

@@ -57,12 +57,16 @@ function canPass(to, from, next){
 }
 
 export default new Router({
+
   linkExactActiveClass: "active",
   routes: [
     {
       path: "/",
+      title: 'Covid 19 THagGetter -  index ',
       name: "index",
+      beforeEnter: guard,
       components: {
+        
         default: Index
       }
     },
@@ -74,6 +78,7 @@ export default new Router({
     //   }
     // },
     {
+      title: 'Covid 19 THagGetter - index',
       path: "/userQuestion",
       name: "UserQuestion",
       beforeEnter: guard,
@@ -82,28 +87,32 @@ export default new Router({
       }
     },
     {
+      title: 'Covid 19 THagGetter - login',
       path: "/login",
       name: "login",
       beforeEnter: canPass,
       components: {
-        default: Login
+        default: Index
+        // default: Login
       }
     },
     {
+      title: 'Covid 19 THagGetter -  register',
       path: "/register",
       name: "register",
       beforeEnter: canPass,
       components: {
         default: Register
       }
-    },
-    {
-      path: "/test",
-      name: "test",
-      components: {
-        default: TestHightlight
-      }
     }
+    ,
+    // {
+    //   path: "/test",
+    //   name: "test",
+    //   components: {
+    //     default: TestHightlight
+    //   }
+    // }
 
   ],
   scrollBehavior: to => {

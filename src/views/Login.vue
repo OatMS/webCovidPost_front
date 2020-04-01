@@ -1,4 +1,5 @@
 <template>
+  <div>
     <section style="height:100vh;" class="section section-shaped section-lg my-0">
         <div class="shape shape-style-1 bg-gradient-default">
             <span></span>
@@ -25,16 +26,19 @@
                         </template>
                         <template>
                             <div class="text-center text-muted mb-4">
-                                <h4>ระบบเก็บข้อมูลวิจัย</h4> 
-                                <small>ลงชื่อเข้าใช้งาน</small><br>
-                                <br>
-                                <facebook-login  class="button"
+                                <h4>COVID-19 THagGetter</h4> 
+                                <!-- <h4>COVID-19 Social Media Text Tagging</h4>  -->
+                                <small>ลงชื่อเข้าใช้งาน</small>
+                                <!-- <facebook-login  class="button"
                                   appId="194868541732995"
                                   @login="onLogin"
                                   @logout="onLogout"
                                   @get-initial-status="getUserData"
                                   @sdk-loaded="sdkLoaded">
-                                </facebook-login>
+                                </facebook-login> -->
+                                
+                                
+                                
                                 <!-- <base-button style="margin:10px 0;" type="neutral">
                                     <img slot="icon" src="@/assets/img/facebook-icon.png">
                                     Facebook
@@ -52,7 +56,7 @@
                                 </base-button> -->
                             </div>
                             
-                            <form role="form">
+                            <form v-on:keyup.enter="checkForm" role="form">
                                 <base-input
                                             class="mb-3"
                                             placeholder="อีเมล์"
@@ -83,24 +87,39 @@
                         </div>
                         <div class="col-6 text-right">
                             <a @click="gotoRegisterPage" class="text-light pointer">
-                                <small>Create new account</small>
+                                <small>สร้างบัญชีผู้ใช้ใหม่</small>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
+
+        
+         
+
+
         </div>
     </section>
+
+
+
+
+
+  </div>
 </template>
 <script>
 
 import axios from 'axios';
 import facebookLogin from 'facebook-login-vuejs'
 import Swal from 'sweetalert2';
+import modal from "@/components/Modal.vue";
 
 
 
 export default {
+  components: {
+    modal
+  },
   data (){
     return {
       // email : "",
@@ -115,13 +134,29 @@ export default {
       personalID: '',
       picture: '',  
       FB: undefined,
-      user:{}
+      user:{},
+
+      modals3: {
+        modal1: true,
+      }
     }
   },
   components: {
     facebookLogin
   },
+  mounted(){
+    this.showPropose()
+  },
   methods: {
+    showPropose(){
+      Swal.fire({
+        html:
+          '<div class="purpose-content"><h6 class="header-purpose-alert"><b>วัตถุประสงค์ของระบบ</b></<h6>'+
+          '<p> </p><p class="content-purpose-alert"> <span style="margin-left: 30px;"></span>'+
+          'แอปพลิเคชัน COVID-19 THagGetter ทำขึ้นเพื่อรวบรวมและจัดระเบียบข้อมูลเกี่ยวกับการร้องขอ, การเสนอ และการแจ้งให้ความช่วยเหลือผ่านสื่อสังคมออนไลน์ต่างๆ เช่น Twitter, Facebook และ Instagram โดยให้อาสาสมัครช่วยแยกรายละเอียดจากโพสต์ข้อความและรูปภาพ เพื่อให้ระบบหรือทีมงานนำเสนอและประสานความช่วยเหลืออื่นๆสามารถนำข้อมูลเหล่านี้ไปใช้งานให้เกิดประโยชน์ต่อสังคมในวงกว้างขึ้นได้ '+
+          '</p> </div>'
+     })
+    },
     checkForm(){
       let textAlert = ""
       let hasAlert = false
@@ -295,9 +330,26 @@ export default {
   }
 };
 </script>
-<style>
+<style scope>
 
 .pointer 
 {cursor: pointer;}
+
+.purpose-content{
+  text-align: left;
+  margin: 20px 20px;
+}
+
+.header-purpose-alert{
+  font-size: 1.1em;
+
+}
+
+.content-purpose-alert{
+  background-color: #FEFAE3;
+  padding: 20px;
+  color: black;
+  font-size: 0.7em;
+}
 
 </style>

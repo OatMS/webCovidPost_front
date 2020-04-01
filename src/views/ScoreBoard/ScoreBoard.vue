@@ -1,5 +1,9 @@
 <template>
   <div class="score-board">
+      <!-- <div>
+        <b><p class="title-name">COVID-19
+          <br>THagGetter</p></b>
+      </div> -->
     <div class="score-board-container">
       <div class="score-board-icon">
         <!-- <img class="ranking-icon" src="@/assets/img/ranking-motion.gif" alt=""> -->
@@ -21,21 +25,24 @@
             </span>
             <img v-if="index == 0" class="gift-icon" src="@/assets/img/starbucks-icon.png" alt="">
             <br>
-            <span class="score-number" style="color:#ffcc00"><b>{{numberWithCommas(row.user_score)}}</b> pt</span>
+            <span class="score-number" style=""><b>{{numberWithCommas(row.user_score)}}</b> ข้อ</span>
           </div>
 
         </div>
 
       </div>
+
+      <div  class="clear:both;"></div>
+
     </div>
     <!-- <div class="btn-view-gift">
       <a href="" class="a-view-gift pointer">ดูของรางวัล</a>
     </div> -->
 
-    <div class="logout-button  pointer" data-toggle="tooltip" data-placement="right" title="logout">
+    <!-- <div class="logout-button  pointer" data-toggle="tooltip" data-placement="right" title="logout">
       <i @click="logout" style="color:white;" class="fa fa-power-off pointer"></i>
 
-    </div>
+    </div> -->
 
   </div>
 </template>
@@ -115,7 +122,7 @@ export default {
   // width:300px;
   float:left;
   height:100vh;
-  background-color: #00a8cc;
+  background-color: #3A5CA5;
   position:fixed;
   top: 0px;
   left:0px;
@@ -125,7 +132,7 @@ export default {
   border-radius: 20px;
   border: 2px solid #FFF;
   width:90%;
-  height:60%;
+  // height:60%;
   margin-left:auto;
   margin-right:auto;
   margin-top: 50px;
@@ -225,4 +232,14 @@ div.logout-button{
 .pointer 
 {cursor: pointer;}
 
+.title-name{
+  color:white;
+  text-align: center;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+  font-size: 1.1em;
+  letter-spacing: 0.05em;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
 </style>
