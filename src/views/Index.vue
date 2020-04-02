@@ -41,20 +41,6 @@
                                       <h4>COVID-19 THagGetter</h4> 
                                       <!-- <h4>COVID-19 Social Media Text Tagging</h4>  -->
                                       <small>ลงชื่อเข้าใช้งาน</small>
-                                      <!-- <facebook-login  class="button"
-                                        appId="194868541732995"
-                                        @login="onLogin"
-                                        @logout="onLogout"
-                                        @get-initial-status="getUserData"
-                                        @sdk-loaded="sdkLoaded">
-                                      </facebook-login> -->
-                                      
-                                      
-                                      
-                                      <!-- <base-button style="margin:10px 0;" type="neutral">
-                                          <img slot="icon" src="@/assets/img/facebook-icon.png">
-                                          Facebook
-                                      </base-button>  -->
                                       <br>
                                       
                                   </div>
@@ -81,18 +67,32 @@
                                         v-model="password"
                                         addon-left-icon="ni ni-lock-circle-open">
                                     </base-input>
-                                        <div class="text-center text-muted">
-                                                <small>Login as</small><br>
-                                        <base-button @click="loginAsGust" type="success"  class="guest-login"> Guest</base-button>
-                                        </div>
                                       <!-- <base-checkbox v-model="remember_me">
                                           Remember me
                                       </base-checkbox> -->
-                                      <div class="text-center">
-                                          <base-button @click="gotoRegister" type="neutral" class="my-4 haft-btn">สร้างบัญชีใหม่</base-button>
-                                          <base-button @click="checkForm" type="primary" class="my-4 haft-btn">ลงชื่อเข้าใช้</base-button>
+                                      <div style="margin-bottom: 20px;" class="text-center">
+                                          <base-button @click="gotoRegister" type="neutral" class=" haft-btn">สร้างบัญชีใหม่</base-button>
+                                          <base-button @click="checkForm" type="primary" class="haft-btn">ลงชื่อเข้าใช้</base-button>
                                       </div>
                                   </form>
+                                        <div style="margin-bottom: 20px;" class="text-center text-muted">
+                                                <small>or Login as</small><br>
+                                        </div>
+                                      <facebook-login  class="button facebook-button"
+                                        appId="194868541732995"
+                                        @login="onLogin"
+                                        @logout="onLogout"
+                                        @get-initial-status="getUserData"
+                                        @sdk-loaded="sdkLoaded">
+                                      </facebook-login>
+                                      
+                                      
+                                      
+                                      <!-- <base-button style="margin:10px 0;" type="neutral">
+                                          <img slot="icon" src="@/assets/img/facebook-icon.png">
+                                          Facebook
+                                      </base-button>  -->
+                                        <base-button @click="loginAsGust" type="success"  class="guest-login"> Guest</base-button>
                               </template>
 
                             
@@ -172,6 +172,8 @@ export default {
     .catch(function (error) {
       currentObj.output = error;
     });
+
+    this.isConnected =  window.$cookies.get('facebook-login')
   },
   data () {
     return {
@@ -362,12 +364,15 @@ export default {
       
     },
     sdkLoaded(payload) {
-      this.isConnected = payload.isConnected
+      // this.isConnected = payload.isConnected
+      this.isConnected  = window.$cookies.get('facebook-login')
+      // this.isConnected = payload.isConnected
       this.FB = payload.FB
       if (this.isConnected) this.getUserData()
     },
     onLogin() {
         this.isConnected = true
+        window.$cookies.set('facebook-login',true)
         this.getUserData()
     },
     onLogout() {
@@ -410,7 +415,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
 #image-index{
   /* background-image: url("@/assets/img/index_background_img.jpg"); */
   width: 100%;
@@ -464,5 +469,40 @@ button.haft-btn{
   width: 48%;
   border-radius: 20px;
 }
+
+.facebook-button {
+  button{
+    width: 100%;
+    border-radius: 25px;
+    padding: 6px !important;
+  }
+  
+}
+
+.facebook-button{
+  padding:0 !important;
+  img{
+    float: left !important;
+    top: 3px;
+    left: 10px;
+    width: 25px !important;
+    margin-top: 6px;
+    margin-left: 20px;
+
+  }
+
+}
+.facebook-button{
+  .spinner {
+  // box-sizing: border-box;
+  width: 25px !important;
+  height: 25px !important;
+  margin-top: 6px;
+  margin-left: 20px;
+
+  }
+
+}
+
 
 </style>

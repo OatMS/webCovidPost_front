@@ -29,7 +29,7 @@
           <h4 style=""><b> ข้อความจาก {{post.text_type}}</b></h4>
           <p class="first-instruction">
             <span class="question-number"><b>1</b></span>
-            กรุณาระบุประเภทของข้อความที่ตัวเลือกด้านล่าง และเลือกคำหรือกลุ่มคำที่บอกข้อมูล ชื่อบุคคล/หน่วยงาน, ช่องทางติดต่อ, สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
+            กรุณาระบุประเภทของข้อความที่ตัวเลือกด้านล่าง และเลือกไฮไลท์คำหรือกลุ่มคำที่บอกข้อมูล ชื่อบุคคล/หน่วยงาน, ช่องทางติดต่อ, สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
             <span style="color: #10A64A;">(คลิกลูกศร &gt; เพื่อไปข้อถัดไป)</span>
           </p>
         </div>
@@ -85,14 +85,14 @@
             <div class="col-lg-6 col-sm-6 mt-6 mt-md-0"><div class="mb-3"><small class="text-uppercase font-weight-bold">เลือกประเภทของข้อความ</small></div>
             
             <div class="custom-control custom-radio purpose-message-radio">
-              <input id="zRNNANl" type="radio" class="custom-control-input " value="Request" v-model="ans.purpose_message">
+              <input @click="setHasChange" id="zRNNANl" type="radio" class="custom-control-input " value="Request" v-model="ans.purpose_message">
               <label for="zRNNANl" class="custom-control-label">
                     ขอความช่วยเหลือ/บริจาค (Request)
               </label>
             </div>
 
             <div class="custom-control custom-radio purpose-message-radio">
-              <input id="GSXZIQP" type="radio" class="custom-control-input" value="Response" v-model="ans.purpose_message">
+              <input @click="setHasChange" id="GSXZIQP" type="radio" class="custom-control-input" value="Response" v-model="ans.purpose_message">
               <label for="GSXZIQP" class="custom-control-label">
                     แจ้งให้ความช่วยเหลือ/บริจาค (Response)
               </label>
@@ -100,7 +100,7 @@
                 
 
             <div class="custom-control custom-radio purpose-message-radio">
-              <input id="GSXZIQP1" type="radio" class="custom-control-input" value="Service" v-model="ans.purpose_message">
+              <input @click="setHasChange" id="GSXZIQP1" type="radio" class="custom-control-input" value="Service" v-model="ans.purpose_message">
               <label for="GSXZIQP1" class="custom-control-label">
                     เสนอความช่วยเหลือ/บริจาค (Service)
               </label>
@@ -115,7 +115,7 @@
                 
 
             <div class="custom-control custom-radio purpose-message-radio">
-              <input id="GSXZIQP2" type="radio" class="custom-control-input" value="etc" v-model="ans.purpose_message">
+              <input @click="setHasChange" id="GSXZIQP2" type="radio" class="custom-control-input" value="etc" v-model="ans.purpose_message">
               <label for="GSXZIQP2" class="custom-control-label">
                     อื่นๆ
               </label>
@@ -127,6 +127,50 @@
       </div>
 
       <div style="clear:both"></div>
+
+
+
+      <!-- ---------------------------------------------------------------------------------------------- -->
+      <!-- ---------------------------answer.items-------------------------------------- -->
+      <!-- ---------------------------------------------------------------------------------------------- -->
+
+
+      <div v-show="ans.items.length >0" class="answer-section">
+        <div  class="arrow-left"></div>
+        <div  class="location-list-new">
+          <div class="second-instruction">
+            <!-- <span class="question-number">2</span> -->
+            <img class="location-icon float-left phase-img"  src="@/assets/img/item-icon.png" alt="">
+            <b><u>
+              <p class="second-instruction">
+              สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
+              <span @click.stop="ans.items = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
+              </p>
+            </u></b>
+          </div>
+
+          <div v-for=" (item,index) in ans.items" class="location-stoke-select pointer "
+              @mouseover="hoverLocationIndex=index;hoverAttr='items'"
+              @mouseleave="hoverLocationIndex=null;hoverAttr=null"
+              
+          >
+          <div class="location-new" >
+             <!-- <img class="location-icon float-left phase-img"  src="@/assets/img/item.png" alt=""> -->
+            <p class="p-location"> {{item.obj_text}} 
+              <span v-show="hoverLocationIndex==index&&hoverAttr=='items'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
+                  <i @click.stop="removeLocation('items',index)" class='delete-location-element fa fa-minus-circle'></i>
+              </span>
+            </p>
+          <span class="badge">{{item.number_request}}</span>
+          </div>
+          
+          </div>
+          <div  class="arrow-right"></div>
+          <div class="location-link-new">
+
+          </div>
+        </div>
+      </div>
 
 
       <!-- ---------------------------------------------------------------------------------------------- -->
@@ -185,6 +229,7 @@
             <b><u>
               <p class="second-instruction">
               ช่องทางติดต่อ
+
               <span @click.stop="ans.contact_address = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
               </p>
             </u></b>
@@ -217,48 +262,6 @@
       <div style="clear:both"></div>
 
 
-      <!-- ---------------------------------------------------------------------------------------------- -->
-      <!-- ---------------------------answer.items-------------------------------------- -->
-      <!-- ---------------------------------------------------------------------------------------------- -->
-
-
-      <div v-show="ans.items.length >0" class="answer-section">
-        <div  class="arrow-left"></div>
-        <div  class="location-list-new">
-          <div class="second-instruction">
-            <!-- <span class="question-number">2</span> -->
-            <img class="location-icon float-left phase-img"  src="@/assets/img/item-icon.png" alt="">
-            <b><u>
-              <p class="second-instruction">
-              สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
-              <span @click.stop="ans.items = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
-              </p>
-            </u></b>
-          </div>
-
-          <div v-for=" (item,index) in ans.items" class="location-stoke-select pointer "
-              @mouseover="hoverLocationIndex=index;hoverAttr='items'"
-              @mouseleave="hoverLocationIndex=null;hoverAttr=null"
-              
-          >
-          <div class="location-new" >
-             <!-- <img class="location-icon float-left phase-img"  src="@/assets/img/item.png" alt=""> -->
-            <p class="p-location"> {{item.obj_text}} 
-              <span v-show="hoverLocationIndex==index&&hoverAttr=='items'" style="font-size: 1em; color: red; margin-left:10px; float:right;">
-                  <i @click.stop="removeLocation('items',index)" class='delete-location-element fa fa-minus-circle'></i>
-              </span>
-            </p>
-          <span class="badge">{{item.number_request}}</span>
-          </div>
-          
-          </div>
-          <div  class="arrow-right"></div>
-          <div class="location-link-new">
-
-          </div>
-        </div>
-      </div>
-
 
       <!-- ------------------------------------ grap footter ---------------------------------------------- -->
       <div class="footer"></div>
@@ -280,8 +283,8 @@
           <h6 slot="header" class="modal-title" id="modal-title-default">ไม่สามารถกลับไปข้อก่อนหน้าได้</h6>
           <p>กรุณาเลือกประเภทของขอความก่อนบันทึก</p>
           <template slot="footer">
-              <base-button @click="modals2.modal1 = false" type="primary">กลับไปแก้ไข</base-button>
-              <base-button @click="modalSaveBeforeBack(false);modals2.modal1 = false" type="link" class="ml-auto" >ละทิ้งข้อนี้
+              <base-button @click="modals2.modal1 = false" type="primary" >กลับไปแก้ไข</base-button>
+              <base-button @click="modalSaveBeforeBack(false);modals2.modal1 = false" type="link" class="ml-auto"  >ละทิ้งข้อนี้
               </base-button>
           </template>
       </modal>
@@ -290,8 +293,8 @@
           <h6 slot="header" class="modal-title" id="modal-title-default">คุณยังไม่ได้เลือกประเภทของข้อความ</h6>
           <p>ต้องการทำข้อนี้ให้เสร็จหรือไม่...?</p>
           <template slot="footer">
-              <base-button @click="modals3.modal1 = false" type="primary">กลับไปแก้ไข</base-button>
-              <base-button @click="setupNextTweet();modals3.modal1 = false" type="link" class="ml-auto" >ละทิ้งข้อนี้
+              <base-button @click="setupNextTweet();modals3.modal1 = false" type="link">ละทิ้งข้อนี้</base-button>
+              <base-button @click="modals3.modal1 = false" type="primary" class="ml-auto" >กลับไปแก้ไข
               </base-button>
           </template>
       </modal>
@@ -405,6 +408,11 @@ export default {
         //   "src": "location-marker.png"
         // },
         {
+          "text" : "สิ่งของ",
+          "type": "items",
+          "src": "item-icon.png"
+        },
+        {
           "text" : "ชื่อบุคคล/หน่วยงาน",
           "type": "organize_name",
           "src": "organization-icon.png"
@@ -413,12 +421,8 @@ export default {
           "text" : "ช่องทางติดต่อ",
           "type": "contact_address",
           "src": "contact-icon.png"
-        },
-        {
-          "text" : "สิ่งของ",
-          "type": "items",
-          "src": "item-icon.png"
         }
+        
       ],
       canNext: false,
       hasChange:  false,
@@ -766,7 +770,7 @@ export default {
     },
     clickBack(){
       console.log("Click back");
-      if(  (!this.checkLengthAllAttr() && !this.isEditMode ) ||  (this.isEditMode && !this.hasChange)){
+      if(  (this.ans.purpose_message == "" &&!this.checkLengthAllAttr() && !this.isEditMode ) ||  (this.isEditMode && !this.hasChange)){
         this.isEditMode = true
         this.backToPrevious()
       }else{
@@ -880,9 +884,13 @@ export default {
         })
     },
     logout(){
+      window.$cookies.set('facebook-login',false)
       window.$cookies.set('user',{})
       this.$router.push('/')
       this.$router.go(process.env.VUE_APP_URL_API+'/')
+    },
+    setHasChange(){
+      this.hasChange  =  true
     }
 
   }

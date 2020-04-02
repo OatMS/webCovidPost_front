@@ -106,6 +106,7 @@ export default {
 
     },
     logout(){
+      window.$cookies.set('facebook-login',{isConnected:false})
       window.$cookies.set('user',{})
       this.$router.push('/login')
       this.$router.go(process.env.VUE_APP_URL_API+'/login')
