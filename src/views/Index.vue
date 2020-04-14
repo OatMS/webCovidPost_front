@@ -163,11 +163,11 @@ export default {
     facebookLogin
   },
   mounted() {
-    console.log('Component mounted.')
+    // console.log('Component mounted.')
     this.axios.get(process.env.VUE_APP_URL_API+'/helloworld', {
     }, { useCredentails: true })
     .then(function (response) {
-      console.log(response.data);
+      // console.log(response.data);
     })
     .catch(function (error) {
       currentObj.output = error;
@@ -246,14 +246,14 @@ export default {
       var remember_me = this.remember_me
       var login_success = false
       this.$cookies.set('test',"test");
-      console.log("cookie: "+this.$cookies.get("test") );
+      // console.log("cookie: "+this.$cookies.get("test") );
       // console.log("Email:"+this.email+"/n Password: "+this.password);
       await axios.post(process.env.VUE_APP_URL_API+'/login', data, { useCredentails: true })
       .then(function (response) {
         if(response.data.status == "success"){
           // initail user info
           var user = response.data
-          console.log("success");
+          // console.log("success");
           window.$cookies.set('user',user.data)
           login_success = true
 
@@ -266,7 +266,7 @@ export default {
 
         }
         else if(response.data.status == "not found"){
-          console.log("incorrect email or password");
+          // console.log("incorrect email or password");
           Swal.fire({
             title: 'ไม่สามารถเข้าสู่ระบบได้ค่ะ',
             text: 'ชื่อผู้ใช้หรือพาสเวิร์ดไม่ถูกต้อง',
@@ -279,7 +279,7 @@ export default {
 
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
         // currentObj.output = error;
       });
 
@@ -305,11 +305,11 @@ export default {
             picture_url :user.picture.data.url
 
           }
-          console.log(user)
-          console.log("personalID: "+this.personalID)
-          console.log("email: "+this.email)
-          console.log("name: "+this.name)
-          console.log("picture: "+this.picture)
+          // console.log(user)
+          // console.log("personalID: "+this.personalID)
+          // console.log("email: "+this.email)
+          // console.log("name: "+this.name)
+          // console.log("picture: "+this.picture)
           this.loginViaFacebook()
           // this.gotoFirstPage()
 
@@ -326,8 +326,8 @@ export default {
       }
       await axios.post(process.env.VUE_APP_URL_API+'/login', data, { useCredentails: false })
       .then(function (response) {
-        console.log("response");
-        console.log(response);
+        // console.log("response");
+        // console.log(response);
 
         if(response.data.status == "success"){
           // initail user info
@@ -340,8 +340,8 @@ export default {
             picture_url: user.picture_url,
             personalID: user.personalID
           }
-          console.log("user_temp");
-          console.log(user_temp);
+          // console.log("user_temp");
+          // console.log(user_temp);
           window.$cookies.set('user',user_temp)
           self.gotoFirstPage()
           this.login_success = true
@@ -351,14 +351,14 @@ export default {
 
         }
         else if(response.data.status == "not found"){
-          console.log("incorrect email or password");
+          // console.log("incorrect email or password");
         }
         // console.log(response.data)
-        console.log("cookie: "+window.$cookies.get('user') );
+        // console.log("cookie: "+window.$cookies.get('user') );
 
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
         // currentObj.output = error;
       });
       
@@ -386,11 +386,11 @@ export default {
       let genInt_now = moment().format('DDMMYYhmmss ')
       let  mock_user = {
         'personalID':"",
-        'name': 'Gust'+genInt_now,
-        'email': 'Gust'+genInt_now,
-        'password': 'Gust'+genInt_now,
+        'name': 'Guest'+genInt_now,
+        'email': 'Guest'+genInt_now,
+        'password': 'Guest'+genInt_now,
         'picture_url': "",
-        'login_via': 'gust',
+        'login_via': 'guest',
         'user_score': 0,
         'lasted_login' : moment().format('LLLL')
 
@@ -408,7 +408,7 @@ export default {
               
               self.gotoFirstPage()
           })
-          console.log(response.data)
+          // console.log(response.data)
       })
     }
   }

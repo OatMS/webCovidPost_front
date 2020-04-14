@@ -83,7 +83,7 @@
                                     </span>
                                 </base-checkbox> -->
                                 <div class="text-center">
-                                    <base-button @click="gotoLoginPage" type="neutral" class="my-4">สร้างบัญชีใหม่</base-button>
+                                    <base-button @click="gotoLoginPage" type="neutral" class="my-4">มีบัญชีอยู่แล้ว</base-button>
                                     <base-button @click.stop="checkVerifyForm" type="primary" class="my-4">สร้างบัญชีผู้ใช้</base-button>
                                 </div>
                             </form>
@@ -135,13 +135,13 @@ export default {
             }, { useCredentails: true })
             .then(function (response) {
 
-                console.log(response.data)
+                // console.log(response.data)
                 let data = response.data
                 if(data.status == "can use this email"){
-                    console.log("Can use this email")
+                    // console.log("Can use this email")
                     return true
                 }else if(data.status == "email already exist"){
-                    console.log("Email is  already  exist")
+                    // console.log("Email is  already  exist")
                     return false
                 }
                 // var result = response.data
@@ -149,7 +149,7 @@ export default {
                 // this.tweet = response.data
             })
             .catch(function (error) {
-                console.log(error);
+                // console.log(error);
                 // currentObj.output = error;
             });
         },
@@ -157,11 +157,11 @@ export default {
             let canRegister = await this.checkEmail()
             
             if(canRegister){
-                console.log("register  with")
-                console.log(this.user)
+                // console.log("register  with")
+                // console.log(this.user)
                 await this.axios.post(process.env.VUE_APP_URL_API+'/register', {user:this.user}).then(function(response){
                     let returnData = response.data
-                    console.log(response.data)
+                    // console.log(response.data)
                 })
             }else{
                 // modal alert
@@ -233,7 +233,7 @@ export default {
             }, { useCredentails: true })
             .then(function (response) {
 
-                console.log(response.data)
+                // console.log(response.data)
                 let data = response.data
                 if(data.status == "can use this email"){
                     axios.post(process.env.VUE_APP_URL_API+'/register', {user:self.user}).then(function(response){
@@ -249,7 +249,7 @@ export default {
                             
                             self.gotoFirstPage()
                         })
-                        console.log(response.data)
+                        // console.log(response.data)
                     })
                 }else if(data.status == "email already exist"){
                     Swal.fire({
@@ -257,7 +257,7 @@ export default {
                             text: 'This email has already used ',
                             icon:'info'
                         })
-                    console.log("Email is  already  exist")
+                    // console.log("Email is  already  exist")
                     // return false
                 }
                 // var result = response.data
@@ -265,7 +265,7 @@ export default {
                 // this.tweet = response.data
             })
             .catch(function (error) {
-                console.log(error);
+                // console.log(error);
                 // currentObj.output = error;
             });
         },

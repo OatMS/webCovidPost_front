@@ -12,7 +12,8 @@
       </div>
 
       <div style="text-align:right; padding-right:40px;" class="user-info col-sm-6">
-        <h7 style="" class=""><b>{{user.name.substring(0, 15)}}</b>  </h7> 
+        <span v-if="(user.name!== undefined )&& (user.name.lenght >  15)" style="" class=""><b>{{user.name.substring(0, 15)}}</b>  </span> 
+        <span v-else-if="user.name!== undefined" style="" class=""><b>{{user.name}}</b>  </span> 
         <img src="@/assets/img/user-icon.png" class="user-icon" alt="">
         <button @click.stop="logout" type="button" class="btn btn-primary btn-sm btn-neutral logout-btn">Logout</button>
 
@@ -29,7 +30,7 @@
           <h4 style=""><b> ข้อความจาก {{post.text_type}}</b></h4>
           <p class="first-instruction">
             <span class="question-number"><b>1</b></span>
-            กรุณาระบุประเภทของข้อความที่ตัวเลือกด้านล่าง และเลือกไฮไลท์คำหรือกลุ่มคำที่บอกข้อมูล ชื่อบุคคล/หน่วยงาน, ช่องทางติดต่อ, สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
+            กรุณาระบุประเภทของข้อความที่ตัวเลือกด้านล่าง และเลือกไฮไลท์คำหรือกลุ่มคำที่บอกข้อมูล โรงพยาบาล/หน่วยงาน, ช่องทางติดต่อ, สิ่งที่ขอ/แจ้งให้/เสนอความช่วยเหลือ
             <span style="color: #10A64A;">(คลิกลูกศร &gt; เพื่อไปข้อถัดไป)</span>
           </p>
         </div>
@@ -43,9 +44,9 @@
               id="tweettext"
               style="">
               <div class="twitter-col-icon" style="width:10%; float:left; text-align: right;">
-                <img v-if="post.text_type == 'Twitter'" src="@/assets/img/twitter-icon.png" style="width:50px" alt="">
-                <img v-else-if="post.text_type == 'Facebook'" src="@/assets/img/facebook-icon.png" style="width:50px" alt="">
-                <img v-else-if="post.text_type == 'Instargram'" src="@/assets/img/ig-icon.png" style="width:50px" alt="">
+                <img v-if="post.from_social == 'Twitter'" src="@/assets/img/twitter-icon.png" style="width:50px; margin-top: 15px;" alt="">
+                <img v-else-if="post.from_social == 'Facebook'" src="@/assets/img/facebook-icon.png" style="width:50px; margin-top: 15px;" alt="">
+                <img v-else-if="post.from_social == 'Instagram'" src="@/assets/img/ig-icon.png" style="width:50px; margin-top: 15px;" alt="">
               </div>
 
               <div @click.start="$refs.contextMenu.close()"
@@ -172,6 +173,7 @@
         </div>
       </div>
 
+      <div style="clear:both"></div>
 
       <!-- ---------------------------------------------------------------------------------------------- -->
       <!-- --------------------------------answer.organize_name---------------------------------------- -->
@@ -186,7 +188,7 @@
             <!-- <span class="question-number">2</span> -->
             <b><u>
               <p class="second-instruction">
-              ชื่อบุคคล/หน่วยงาน
+              โรงพยาบาล/หน่วยงาน
               <span @click.stop="ans.organize_name = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
               </p>
             </u></b>
@@ -228,7 +230,7 @@
             <!-- <span class="question-number">2</span> -->
             <b><u>
               <p class="second-instruction">
-              ช่องทางติดต่อ
+              ชื่อบุคคล/ช่องทางติดต่อ
 
               <span @click.stop="ans.contact_address = []" class="float-right clear-location-all pointer">ลบทั้งหมด</span>
               </p>
@@ -367,12 +369,14 @@ export default {
       nowHightlighted:"",
       nowHightlighted_start:null,
       nowHightlighted_end:null,
+      hospital_name:[],
+      items_name:[],
       phaseList:[],
       ans: {
         // 'contact_name':[],
         'contact_address': [], //ที่อยู่
         'organize_name':[], //หน่วยงานที่ขอรับบริจาค
-        'purpose_message':"", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
+        'purpose_message':"Request", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
         // 'requester_or_helper':[], //ชื่อคนขอความช่วยเหลือ หรือ ชื่อคนเสนอตวามช่วยเหลือ
         'items':[] //สิ่งของที่ร้อขอ หรือเสนอ
       },
@@ -413,12 +417,12 @@ export default {
           "src": "item-icon.png"
         },
         {
-          "text" : "ชื่อบุคคล/หน่วยงาน",
+          "text" : "โรงพยาบาล/หน่วยงาน",
           "type": "organize_name",
           "src": "organization-icon.png"
         },
         {
-          "text" : "ช่องทางติดต่อ",
+          "text" : "ชื่อบุคคล/ช่องทางติดต่อ",
           "type": "contact_address",
           "src": "contact-icon.png"
         }
@@ -436,35 +440,197 @@ export default {
   },
   mounted(){
     var result = {}
+    let self  = this;
 
     var init = async ()=> {
       await this.axios.get(process.env.VUE_APP_URL_API+'/nextTweet', {
       }, { useCredentails: true })
       .then(function (response) {
 
-        console.log(response.data)
+        // console.log(response.data)
         result = response.data
         // this.tweet = response.data
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
         // currentObj.output = error;
       });
       this.post_text = result['post_text']
       this.post = result
       this.post_id = result._id
       this.user = $cookies.get("user")
-      console.log(this.user)
+      // console.log(this.user)
       this.user_score = this.user.user_score
       // console.log(this.tweet_text)
-      console.log(this.post)
+      // console.log(this.post)
+
+      this.axios.get(process.env.VUE_APP_URL_API+'/getWordSuggest', {
+      }, { useCredentails: true })
+      .then(function (response) {
+
+        // console.log(response.data)
+        if(response.data.status == "success")
+          self.hospital_name = response.data.data.hospital_name
+          self.items_name = response.data.data.items_name
+          self.setSuggestItems()
+        
+      })
+      .catch(function (error) {
+        // console.log(error);
+        // currentObj.output = error;
+      });
+
+
     }
     init()
     this.updateUserScore()
+    // this.setSuggestItems()
     // this.payloadContextMenuTweet = ;
 
   },
   methods: {
+    setSuggestItems(){
+      var BreakException = {};
+      let self = this;
+      // console.log("set suggest")
+      var found_hospital = []
+      var found_items = []
+      this.hospital_name.forEach(name  =>{
+        let fullname_hospital = name
+        let lp_name = name.replace("โรงพยาบาล",'รพ.')
+        let lp_space_name = name.replace("โรงพยาบาล",'รพ ')
+        let lpst_name = name.replace("โรงพยาบาลส่งเสริมสุขภาพตำบล",'รพ.สต.')
+        let lpst_name_space = name.replace("โรงพยาบาลส่งเสริมสุขภาพตำบล",'รพ. สต.')
+        let lpst_name_double_space = name.replace("โรงพยาบาลส่งเสริมสุขภาพตำบล",'รพ. สต. ')
+
+        let found_position_fullname = self.post_text.indexOf(fullname_hospital)
+        let found_position_lp_name = self.post_text.indexOf(lp_name)
+        let found_position_lp_space_name = self.post_text.indexOf(lp_space_name)
+        let found_position_lpst_name = self.post_text.indexOf(lpst_name)
+        let found_position_lpst_name_space = self.post_text.indexOf(lpst_name_space)
+        let found_position_lpst_name_double_space = self.post_text.indexOf(lpst_name_double_space)
+        
+        let start_position = -1
+        let used_name = ""
+        
+        if(found_position_fullname>-1){
+          start_position  = found_position_fullname
+          used_name = fullname_hospital
+        }
+        else if(found_position_lp_name>-1){
+          start_position  = found_position_lp_name
+          used_name = lp_name
+        }
+        else if(found_position_lp_space_name>-1){
+          start_position  = found_position_lp_space_name
+          used_name = lp_space_name
+        }
+        else if(found_position_lpst_name>-1){
+          start_position  = found_position_lpst_name
+          used_name = lpst_name
+        }
+        else if(found_position_lpst_name_space>-1){
+          start_position  = found_position_lpst_name_space
+          used_name = lpst_name_space
+        }
+        else if(found_position_lpst_name_double_space>-1){
+          start_position  = found_position_lpst_name_double_space
+          used_name = pst_name_double_space
+        }
+        
+          // console.log(name)
+        if(start_position>-1){
+          // check dupplicate
+          if(found_hospital.length>0){
+            try{
+              found_hospital.forEach(found_name=>{
+                let index_in_found_name =  found_name.indexOf(used_name)
+                if(index_in_found_name<0){
+                  let end_position = start_position+used_name.length
+                  let item = {
+                    start_position: start_position ,
+                    end_position: end_position,
+                    obj_text: used_name,
+                    extracted_by: "Auto"
+                  }
+                  self.ans.organize_name.push(item)
+                  found_hospital.push(used_name)
+                  throw BreakException;
+                }
+              })
+            }
+            catch(e){
+              if (e !== BreakException) throw e;
+            }
+          }
+          // first found apppend
+          else{
+            let end_position = start_position+used_name.length
+                let item = {
+                  start_position: start_position ,
+                  end_position: end_position,
+                  obj_text: used_name,
+                  extracted_by: "Auto"
+                }
+                self.ans.organize_name.push(item)
+                found_hospital.push(used_name)
+
+          }
+        }
+        
+      })
+
+
+      this.items_name.forEach(name  =>{
+        let start_position =  self.post_text.indexOf(name)
+        let isDuplicate = false
+        if(start_position>-1){
+          // console.log(name)
+          // console.log("Found items arr:")
+          // console.log(found_items)
+          if(found_items.length>0){
+            try{
+              found_items.forEach(found_name=>{
+                let found_name_norm = found_name.replace(" ","")
+                let index_in_found_name =  found_name_norm.indexOf(name.replace(" ",""))
+                // console.log(found_name_norm+"/"+name.replace(" ","")+" ==> "+index_in_found_name)
+                if(index_in_found_name>-1){
+                  isDuplicate = true
+                  throw BreakException;
+                }
+              })
+            }
+            catch(e){
+              if (e !== BreakException) throw e;
+            }
+            if(!isDuplicate){
+              let end_position = start_position+name.length
+              let item = {
+                start_position: start_position ,
+                end_position: end_position,
+                obj_text: name,
+                extracted_by: "Auto"
+              }
+              self.ans.items.push(item)
+              found_items.push(name)
+            }
+          }else{
+            let end_position = start_position+name.length
+            let item = {
+              start_position: start_position ,
+              end_position: end_position,
+              obj_text: name,
+              extracted_by: "Auto"
+            }
+            self.ans.items.push(item)
+            found_items.push(name)
+          }
+        }
+      })
+
+      
+
+    },
 
     // ----- get hightlight text ----------
     closeContextMenu(){
@@ -482,13 +648,13 @@ export default {
         this.highlightOnPhaseId = null
       }
       else{
-        console.log("Just highlight text");
+        // console.log("Just highlight text");
         this.nowHightlighted = window.getSelection().toString()
         this.nowHightlighted_start = window.getSelection().getRangeAt(0).startOffset
         this.nowHightlighted_end = window.getSelection().getRangeAt(0).endOffset 
-        console.log("nowHightlighted: "+this.nowHightlighted);
-        console.log("nowHightlighted_start: "+this.nowHightlighted_start);
-        console.log("nowHightlighted_end: "+this.nowHightlighted_end);
+        // console.log("nowHightlighted: "+this.nowHightlighted);
+        // console.log("nowHightlighted_start: "+this.nowHightlighted_start);
+        // console.log("nowHightlighted_end: "+this.nowHightlighted_end);
 
         this.dupplicate = false
         // hightlight in tweet
@@ -534,8 +700,8 @@ export default {
           //   console.log("appendPhase press Area");
           // }
 
-          console.log("text_type is: "+text_type)
-          console.log(this.ans)
+          // console.log("text_type is: "+text_type)
+          // console.log(this.ans)
 
           // if(text_type=="contact_name"){
           //   this.ans.contact_name.push(this.nowHightlighted)
@@ -544,6 +710,7 @@ export default {
             obj_text: this.nowHightlighted,
             start_position: this.nowHightlighted_start,
             end_position: this.nowHightlighted_end,
+            extracted_by: "manual"
 
           }
 
@@ -561,10 +728,10 @@ export default {
                 inputPlaceholder: "จำนวน",
                 showCancelButton: true        
             }).then((result) => {
-              console.log("result.value: "+result.value)
+              // console.log("result.value: "+result.value)
                 if (result.value) {
                     this.appendItem(temp_item,result.value)
-                    console.log("Result: " + result.value);
+                    // console.log("Result: " + result.value);
                 }else if(result.value==""){
                   this.appendItem(temp_item, 0)
                 }
@@ -601,14 +768,14 @@ export default {
       }
     },
     async removeLocation(hoverAttr,locationIndex){
-      console.log("Before remove")
-      console.log(this.ans)
+      // console.log("Before remove")
+      // console.log(this.ans)
       
       this.ans[''+hoverAttr].splice(locationIndex,1)
       this.hasChange = true
 
-      console.log("After remove")
-      console.log(this.ans)
+      // console.log("After remove")
+      // console.log(this.ans)
     },
     getImgUrl(img) {
       return require("@/assets/img/"+img)
@@ -632,7 +799,7 @@ export default {
       //   allLocation.push(l.location_text)
       // })
 
-      console.log(allLocation);
+      // console.log(allLocation);
       var data = {}
 
       if(hasLocation){
@@ -662,8 +829,8 @@ export default {
       }
 
       
-      console.log("data post: ");
-      console.log(data);
+      // console.log("data post: ");
+      // console.log(data);
 
       if(this.isEditMode){
         // data._id = this.answer_history[this.answer_current]._id
@@ -674,7 +841,7 @@ export default {
         uri = process.env.VUE_APP_URL_API+"/submitAndNext"
       }
       // console.log(data);
-      console.log("is  Edit mode: "+self.isEditMode);
+      // console.log("is  Edit mode: "+self.isEditMode);
 
       // console.log(JSON.stringify(data))
       var isEditMode_temp = true && this.isEditMode
@@ -692,7 +859,7 @@ export default {
 
       var answer = await this.axios.post(uri, data , { useCredentails: true })
       .then(function (response) {
-        console.log("submit result: "+JSON.stringify(response.data))
+        // console.log("submit result: "+JSON.stringify(response.data))
         if(!isEditMode_temp){
           self.answer_history.push(response.data.result)
         }
@@ -704,7 +871,7 @@ export default {
 
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
         // currentObj.output = error;
       });
 
@@ -718,13 +885,14 @@ export default {
 
 
 
-      console.log("answer_history is: ");
-      console.log(this.answer_history);
-      console.log("answer in  "+this.answer_current+"/"+this.answer_history.length);
-      console.log("answer count: "+this.answer_count);
+      // console.log("answer_history is: ");
+      // console.log(this.answer_history);
+      // console.log("answer in  "+this.answer_current+"/"+this.answer_history.length);
+      // console.log("answer count: "+this.answer_count);
 
     },
     setupNextTweet(){
+      var self = this
       var result = {}
       var init = async ()=> {
         await this.axios.get(process.env.VUE_APP_URL_API+'/nextTweet', {
@@ -733,26 +901,30 @@ export default {
 
           // console.log(response.data)
           result = response.data
+          self.post_text = result['post_text']
+          self.post = result
+          self.ans={
+            // 'contact_name':[],
+            'contact_address': [], //ที่อยู่
+            'organize_name':[], //หน่วยงานที่ขอรับบริจาค
+            'purpose_message':"Request", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
+            'requester_or_helper':[], //ชื่อคนขอความช่วยเหลือ หรือ ชื่อคนเสนอตวามช่วยเหลือ
+            'items':[] //สิ่งของที่ร้อขอ หรือเสนอ
+          }
+          self.setSuggestItems()
           // this.tweet = response.data
         })
         .catch(function (error) {
-          console.log(error);
+          // console.log(error);
           // currentObj.output = error;
         });
-        this.post_text = result['post_text']
-        this.post = result
+        
         // console.log(this.tweet_text)
       }
-      console.log("setup  next post")
+      // console.log("setup  next post")
       init()
-      this.ans={
-        // 'contact_name':[],
-        'contact_address': [], //ที่อยู่
-        'organize_name':[], //หน่วยงานที่ขอรับบริจาค
-        'purpose_message':"", //จุดประสงค์ของข้อความ 'ร้องขอความช่วยเหลือ' หรือ 'เสนอความช่วยเหลือ'
-        'requester_or_helper':[], //ชื่อคนขอความช่วยเหลือ หรือ ชื่อคนเสนอตวามช่วยเหลือ
-        'items':[] //สิ่งของที่ร้อขอ หรือเสนอ
-      }
+      
+      
     },
     submitAndNext(hasLocation){
       this.submit(hasLocation)
@@ -760,16 +932,16 @@ export default {
     },
     clickNext(){
       if(this.checkComplete()){
-        console.log("Can next")
+        // console.log("Can next")
         this.submitAndNext(true)
       }else{
-        console.log("Can not next")
+        // console.log("Can not next")
         
         this.modals3.modal1 = true
       }
     },
     clickBack(){
-      console.log("Click back");
+      // console.log("Click back");
       if(  (this.ans.purpose_message == "" &&!this.checkLengthAllAttr() && !this.isEditMode ) ||  (this.isEditMode && !this.hasChange)){
         this.isEditMode = true
         this.backToPrevious()
@@ -787,7 +959,7 @@ export default {
     modalSaveBeforeBack(isSubmit){
       if(isSubmit){
         if(!this.checkComplete()){
-          console.log(" still have empty phase ")
+          // console.log(" still have empty phase ")
           this.modals2.modal1 = true
           this.modals.modal1 = false
         }else{
@@ -805,7 +977,7 @@ export default {
 
     },
     async backToPrevious(){
-      console.log("back to previous");
+      // console.log("back to previous");
       var self = this;
 
       this.isEditMode = true
@@ -814,25 +986,25 @@ export default {
 
         this.answer_current = this.answer_current-1
         // console.log(this.answer_history);
-        console.log("this.answer_current: "+this.answer_current);
+        // console.log("this.answer_current: "+this.answer_current);
         var previous_answer = Object.assign({}, JSON.parse(JSON.stringify(this.answer_history[this.answer_current])));
         var answer_id = previous_answer._id
         var answer = {}
         var post = {}
-        console.log("can  back to"+answer_id);
+        // console.log("can  back to"+answer_id);
 
 
-        console.log(previous_answer);
+        // console.log(previous_answer);
         this.post_text  = previous_answer.post_text
         this.post_id  = previous_answer.post_id
         this.ans =  previous_answer.ans
         this.editAnswer_id = previous_answer._id
 
-        console.log("is  Edit mode: "+this.isEditMode);
-        console.log("answer_history is: ");
-        console.log(this.answer_history);
-        console.log("answer in  "+this.answer_current+"/"+this.answer_history.length);
-        console.log("answer count: "+this.answer_count);
+        // console.log("is  Edit mode: "+this.isEditMode);
+        // console.log("answer_history is: ");
+        // console.log(this.answer_history);
+        // console.log("answer in  "+this.answer_current+"/"+this.answer_history.length);
+        // console.log("answer count: "+this.answer_count);
 
       }
       this.hasChange =  false
@@ -841,11 +1013,11 @@ export default {
 
     },
     async checkCanNext(){
-      console.log("Check can next!!!!");
+      // console.log("Check can next!!!!");
       let hasMainLocation = false
 
       if(this.ans.length == 0|| !hasMainLocation ){
-        console.log("cannot next")
+        // console.log("cannot next")
         this.canNext = false
       }else{
         this.canNext = true
@@ -867,13 +1039,13 @@ export default {
 
     },
     updateUserScore(){
-      console.log("updateUserScore")
+      // console.log("updateUserScore")
       self = this
       let user =  window.$cookies.get('user')
       axios.post(process.env.VUE_APP_URL_API+'/getUserScore', {_id:this.user._id} , { useCredentails: true })
         .then(function (response) {
           if(response.data.status == 'success'){
-            console.log(response)
+            // console.log(response)
             let temp = user
             temp.user_score = response.data.data.user_score
             window.$cookies.set('user',temp)
@@ -886,7 +1058,10 @@ export default {
     logout(){
       window.$cookies.set('facebook-login',false)
       window.$cookies.set('user',{})
-      this.$router.push('/')
+      window.$cookies.keys().forEach(function(c) { 
+        window.$cookies.remove(c)
+      });
+      // this.$router.push('/')
       this.$router.go(process.env.VUE_APP_URL_API+'/')
     },
     setHasChange(){

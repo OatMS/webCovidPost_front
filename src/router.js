@@ -14,16 +14,16 @@ Vue.use(Router);
 
 
 function guard(to, from, next){
-  console.log("check in guard")
+  // console.log("check in guard")
   try{
     if(window.$cookies.isKey("user") &&  window.$cookies.get("user")._id != undefined) {
       // or however you store your logged in state
-      console.log("cookie is:"+window.$cookies.get("user")._id);
-      console.log("can  go to userQuestion")
+      // console.log("cookie is:"+window.$cookies.get("user")._id);
+      // console.log("can  go to userQuestion")
 
       next(); // allow to enter route
     } else{
-      console.log("can not  go")
+      // console.log("can not  go")
         next('/login'); // go to '/login';
     }
   }
@@ -36,12 +36,12 @@ function guard(to, from, next){
 }
 
 function canPass(to, from, next){
-  console.log('in check canPass')
+  // console.log('in check canPass')
   try{
     if(window.$cookies.isKey("user") &&  window.$cookies.get("user")._id != undefined) {
       // or however you store your logged in state
-      console.log('alerady have user cookies')
-      console.log("cookie is:"+window.$cookies.get("user")._id);
+      // console.log('alerady have user cookies')
+      // console.log("cookie is:"+window.$cookies.get("user")._id);
       
 
 

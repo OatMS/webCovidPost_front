@@ -1,17 +1,22 @@
 <template>
   <div class="score-board">
       <!-- <div>
-        <b><p class="title-name">COVID-19
-          <br>THagGetter</p></b>
+        <b><p class="title-name">
+          
+          COVID-19
+          <br>THagGetter
+          </p></b>
       </div> -->
     <div class="score-board-container">
       <div class="score-board-icon">
+        
         <!-- <img class="ranking-icon" src="@/assets/img/ranking-motion.gif" alt=""> -->
         <img class="ranking-icon" src="@/assets/img/ranking-icon.png" alt="">
       </div>
       <div class="user-ranking">
         <div class="header-ranking">
-          <b><h7> จัดอันดับ<br>คะแนนจิตอาสา </h7></b>
+          
+          <b><span> จัดอันดับ<br>คะแนนจิตอาสา </span></b>
         </div>
         <div class="user-list">
           <div v-for="(row, index) in user_score" class="user-score">
@@ -35,14 +40,31 @@
       <div  class="clear:both;"></div>
 
     </div>
-    <!-- <div class="btn-view-gift">
-      <a href="" class="a-view-gift pointer">ดูของรางวัล</a>
-    </div> -->
+    
 
     <!-- <div class="logout-button  pointer" data-toggle="tooltip" data-placement="right" title="logout">
       <i @click="logout" style="color:white;" class="fa fa-power-off pointer"></i>
 
     </div> -->
+
+
+    <div>
+      <p class="title-name">
+        จำนวนโพสต์ที่ทำแล้วในระบบ <br> 
+        <b>
+          <span style="font-size:1.3em">
+            {{total_answer}} 
+          </span>
+        </b>
+        โพสต์
+      </p>
+    </div>
+
+    <div class="btn-view-gift">
+      <a  target="blank" href="https://kepler.gl/demo/map?mapUrl=https://dl.dropboxusercontent.com/s/cb1bhebj1itpz5o/keplergl_52rul6g.json" class="a-view-gift pointer">
+      สถิติผู้ติดเชื้อตามพื้นที่
+      </a>
+    </div>
 
   </div>
 </template>
@@ -51,7 +73,8 @@
 export default {
   data() {
     return {
-      user_score: []
+      user_score: [],
+      total_answer:0
     }
 
   },
@@ -67,19 +90,30 @@ export default {
       }, { useCredentails: true })
       .then(function (response) {
 
-        console.log(response.data)
+        // console.log(response.data)
         var result = response.data.data
         self.user_score = result
         // this.tweet = response.data
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
         // currentObj.output = error;
       });
       // this.tweet_text = result['tweet_text']
       // this.tweet = result
       // this.tweet_id = result._id
       // console.log(this.tweet_text)
+      this.axios.get(process.env.VUE_APP_URL_API+'/answerCount', {
+      }, { useCredentails: true })
+      .then(function (response) {
+
+        let total_answer = response.data.answer_count
+        self.total_answer = total_answer
+      })
+      .catch(function (error) {
+        // console.log(error);
+        // currentObj.output = error;
+      });
     }
     init()
   },
@@ -89,20 +123,34 @@ export default {
     },
     updateScore(){
       var self = this
+      // -------- get top score ---------
       this.axios.get(process.env.VUE_APP_URL_API+'/topScore', {
       }, { useCredentails: true })
       .then(function (response) {
 
-        console.log(response.data)
-        console.log("upadte score");
+        // console.log(response.data)
+        // console.log("upadte score");
         var result = response.data
         self.user_score = result.data
         // this.tweet = response.data
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
         // currentObj.output = error;
       });
+
+      this.axios.get(process.env.VUE_APP_URL_API+'/answerCount', {
+      }, { useCredentails: true })
+      .then(function (response) {
+
+        let total_answer = response.data.answer_count
+        self.total_answer = total_answer
+      })
+      .catch(function (error) {
+        // console.log(error);
+        // currentObj.output = error;
+      });
+
 
     },
     logout(){
@@ -218,7 +266,7 @@ div.btn-view-gift{
 
 a.a-view-gift{
   color: #FFF;
-  font-size: 0.8em;
+  font-size: 0.9em;
   border-radius: 20px;
   border: 1px solid #FFF;
   padding: 5px 10px;
@@ -236,9 +284,9 @@ div.logout-button{
 .title-name{
   color:white;
   text-align: center;
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: white;
-  font-size: 1.1em;
+  // -webkit-text-stroke-width: 1px;
+  // -webkit-text-stroke-color: white;
+  font-size: 1em;
   letter-spacing: 0.05em;
   margin-top: 10px;
   margin-bottom: 0px;
